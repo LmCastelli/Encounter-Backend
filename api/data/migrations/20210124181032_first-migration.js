@@ -14,7 +14,6 @@ exports.up = async (knex) => {
       dnd.integer('climb_speed', 1000).unsigned()
       dnd.integer('fly_speed', 1000).unsigned()
       dnd.integer('swim_speed', 1000).unsigned()
-      dnd.integer('fly_speed', 1000).unsigned()
       dnd.integer('STR', 50).notNullable().unsigned()
       dnd.integer('DEX', 50).notNullable().unsigned()
       dnd.integer('CON', 50).notNullable().unsigned()
@@ -37,8 +36,17 @@ exports.up = async (knex) => {
       dnd.integer('true_sight', 200).unsigned()
       dnd.integer('challenge_rating', 200).notNullable().unsigned()
     })
+    .createTable('abilities', (ability) => {
+      ability.increments('ability_id')
+      ability.integer('user').unsigned().notNullable();
+      ability.string('ability_name').notNullable();
+      ability.string('ability_description').notNullable();
+      ability.foreign('user').references('dnd_id').inTable('dnd')
+    })
 }
 
 exports.down = async (knex) => {
-  await knex.schema.dropTableIfExists('dnd')
+  await knex.schema
+  .dropTableIfExists('abilities')
+  .dropTableIfExists('dnd')
 }
