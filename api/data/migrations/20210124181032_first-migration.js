@@ -38,10 +38,10 @@ exports.up = async (knex) => {
     })
     .createTable('abilities', (ability) => {
       ability.increments('ability_id')
-      ability.integer('user').unsigned().notNullable();
+      ability.integer('user_id').unsigned().notNullable();
       ability.string('ability_name').notNullable();
       ability.string('ability_description').notNullable();
-      ability.foreign('user').references('dnd_id').inTable('dnd')
+      ability.foreign('user_id').references('dnd_id').inTable('dnd')
     })
 }
 

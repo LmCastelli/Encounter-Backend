@@ -17,7 +17,7 @@ function findDnd() {
 
 function findById(id) {
     return db('dnd')
-        .where({dnd_id: Number(id)});
+        .where({dnd_id: Number(id)}).first();
 } 
 
 
@@ -43,6 +43,11 @@ function findAbilitiesByDndId(dnd_id) {
         .join('dnd', 'dnd.dnd_id', 'user')
         .select('abilities.*')
         .where('user', dnd_id);
+}
+
+function findAbilitiesById(id) {
+    return db('abilities')
+        .where({ability_id: Number(id)}).first();
 }
 
 function insertAbility(ability) {
@@ -71,6 +76,7 @@ module.exports = {
     update,
     remove,
     findAbilitiesByDndId,
+    findAbilitiesById,
     insertAbility,
     updateAbility,
     removeAbility,
