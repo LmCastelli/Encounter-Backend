@@ -38,11 +38,16 @@ function remove(id) {
         .del();
 }
 
+function findByName(name) {
+    return db('dnd')
+        .where('name', name)
+}
+
 function findAbilitiesByDndId(dnd_id) {
     return db('abilities')
-        .join('dnd', 'dnd.dnd_id', 'user')
+        .join('dnd', 'dnd.dnd_id', 'abilities.user_id')
         .select('abilities.*')
-        .where('user', dnd_id);
+        .where('user_id', dnd_id);
 }
 
 function findAbilitiesById(id) {
@@ -55,9 +60,9 @@ function insertAbility(ability) {
         .insert(ability);
 }
 
-function updateAbility(user,ability) {
+function updateAbility(user_id, ability) {
     return db('abilities')
-        .where('user', Number(user))
+        .where('user', Number(user_id))
         .update(ability);
 }
 
@@ -75,6 +80,7 @@ module.exports = {
     insert,
     update,
     remove,
+    findByName,
     findAbilitiesByDndId,
     findAbilitiesById,
     insertAbility,

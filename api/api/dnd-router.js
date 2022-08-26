@@ -15,6 +15,7 @@ delete ability
 
 const express = require('express')
 const Dnd = require('./dnd-model')
+const {checkIdExists, validateDnd, checkAbilityIdExists,} = require('./dnd-middleware')
 
 const router = express.Router()
 
@@ -31,15 +32,8 @@ router.get('/', (req, res) => {
         })
 })
 
-router.get('/:id', (req, res) => {
-    Dnd.findById(req.params.id)
-        .then(entry => {
-            res.status(200).json(entry)
-        })
-        .catch(err => {
-            console.log(err)
-            res.status(500).json({message: "Error retrieving specific entry"})
-        })
+router.get('/:id',checkIdExists, (req, res) => {
+    res.status(200).json(req.entry)
 })
 
 router.post('/', (req, res) => {
@@ -88,7 +82,7 @@ router.delete('/:id', async (req, res) => {
         const entry = await Dnd.findById(req.params.id)
         if(!entry) {
             res.status(404).json({
-                message:'That entry cannot be found'
+                message:`That entry cannot be found ${req.params.id}` 
             })
         } else {
             await Dnd.remove(req.params.id)
@@ -120,15 +114,8 @@ router.get('/:id/abilities', async (req, res) => {
     }
 })
 
-router.get('/abilities/:id', (req, res) => {
-    Dnd.findAbilitiesById(req.params.id)
-        .then(ability => {
-            res.status(200).json(ability)
-        })
-        .catch(err => {
-            console.log(err)
-            res.status(500).json('Ability with that id not found')
-        })
+router.get('/abilities/:id', checkAbilityIdExists, (req, res) => {
+    res.status(200).json(req.ability)
 })
 
 router.post('/abilities', (req, res) => {
@@ -186,3 +173,5 @@ router.delete('/abilities/:id', async (req, res) => {
         })
     }
 })
+
+module.exports = router;
