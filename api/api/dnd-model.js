@@ -32,10 +32,9 @@ function update(id, dnd) {
         .update(dnd);
 }
 
-function remove(id) {
+function remove(dnd_id) {
     return db('dnd')
-        .where('dnd_id', Number(id))
-        .del();
+        .where({dnd_id}).del();
 }
 
 function findByName(name) {
@@ -62,7 +61,7 @@ function insertAbility(ability) {
 
 function updateAbility(user_id, ability) {
     return db('abilities')
-        .where('user', Number(user_id))
+        .where('ability_id', Number(user_id))
         .update(ability);
 }
 

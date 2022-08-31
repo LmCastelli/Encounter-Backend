@@ -15,7 +15,7 @@ delete ability
 
 const express = require('express')
 const Dnd = require('./dnd-model')
-const {checkIdExists, validateDnd, checkAbilityIdExists,} = require('./dnd-middleware')
+const {checkIdExists,  checkAbilityIdExists, validateAbility, validateDnd,} = require('./dnd-middleware')
 
 const router = express.Router()
 
@@ -36,9 +36,8 @@ router.get('/:id',checkIdExists, (req, res) => {
     res.status(200).json(req.entry)
 })
 
-router.post('/', (req, res) => {
-    const newEntry = req.body;
-    Dnd.insert({newEntry})
+router.post('/', validateDnd,  (req, res) => {
+    Dnd.insert(req.entry)
         .then(entry => {
             res.status(201).json(entry)
         })
@@ -50,7 +49,7 @@ router.post('/', (req, res) => {
         })
 })
 
-router.put('/:id', (req, res) => {
+router.put('/:id', validateDnd, checkIdExists, (req, res) => {
     Dnd.findById(req.params.id)
         .then(entry => {
             if(!entry) {
@@ -58,7 +57,7 @@ router.put('/:id', (req, res) => {
                     message:'This id does not exist'
                 })
             } else {
-                return Dnd.update(req.params.id, req.body)
+                return Dnd.update(req.params.id, req.entry)
             }
         })
         .then(entry => {
@@ -77,25 +76,20 @@ router.put('/:id', (req, res) => {
         })
 })
 
-router.delete('/:id', async (req, res) => {
-    try {
-        const entry = await Dnd.findById(req.params.id)
-        if(!entry) {
-            res.status(404).json({
-                message:`That entry cannot be found ${req.params.id}` 
-            })
-        } else {
-            await Dnd.remove(req.params.id)
-        }
-    } catch (err) {
+router.delete('/:id', checkIdExists,  async (req, res) => {
+    Dnd.remove(req.params.id)
+    .then(deletedEntry => {
+        res.status(200).json(deletedEntry)
+    })
+    .catch(err => {
         res.status(500).json({
-            message: 'The entry could not be deleted', 
-            err: err.message
+            message: 'The entry could not be deleted',
+            error: err.message
         })
-    }
+    })
 })
 
-router.get('/:id/abilities', async (req, res) => {
+router.get('/:id/abilities', checkIdExists, async (req, res) => {
     try {
         const entry = await Dnd.findById(req.params.id)
         if(!entry) {
@@ -118,9 +112,8 @@ router.get('/abilities/:id', checkAbilityIdExists, (req, res) => {
     res.status(200).json(req.ability)
 })
 
-router.post('/abilities', (req, res) => {
-    const newAbility = req.body
-    Dnd.insertAbility({newAbility})
+router.post('/abilities', validateAbility, (req, res) => {
+    Dnd.insertAbility(req.ability)
         .then(ability => {
             res.status(201).json(ability)
         })
@@ -132,7 +125,7 @@ router.post('/abilities', (req, res) => {
         })
 })
 
-router.put('/abilities/:id', (req, res) => {
+router.put('/abilities/:id', checkAbilityIdExists, validateAbility, (req, res) => {
     Dnd.findAbilitiesById(req.params.id)
         .then(ability => {
             if(!ability) {
@@ -157,21 +150,17 @@ router.put('/abilities/:id', (req, res) => {
         })
 })
 
-router.delete('/abilities/:id', async (req, res) => {
-    try {
-        const ability = await Dnd.findAbilitiesById(req.params.id)
-        if(!ability) {
-            res.status(404).json({message: 'Ability not found'})
-        }
-        else {
-            Dnd.removeAbility(ability)
-        }
-    } catch(err) {
+router.delete('/abilities/:id', checkAbilityIdExists, (req, res) => {
+   Dnd.removeAbility(req.params.id)
+   .then(ability => {
+        res.status(200).json(ability)
+   })
+   .catch(err => {
         res.status(500).json({
-            message: 'The ability could not be found',
+            message: 'Ability could not be deleted',
             error: err.message
         })
-    }
+   })
 })
 
 module.exports = router;

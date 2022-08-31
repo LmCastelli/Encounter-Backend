@@ -22,11 +22,17 @@ async function checkIdExists(req, res, next) {
 }
 
 function validateDnd(req, res, next) {
-    console.log(req.body)
-    next();
+    const entry = req.body;
+    if(!entry.name || !entry.hit_points || !entry.speed || !entry.STR || !entry.DEX || !entry.CON || !entry.INT || !entry.WIS || !entry.WIS || !entry.CHA || !entry.challenge_rating) {
+        res.status(500).json({message: "Please entre all the required fields for an entry!"})
+    }else {
+        req.entry = entry;
+        next();
+    }
+    
 }
 
-function checkNameAvailable(rea, res, next) {
+function checkNameAvailable(req, res, next) {
     //check string.to.lower version of name
 }
 
@@ -45,7 +51,13 @@ async function checkAbilityIdExists(req, res, next) {
 }
 
 function validateAbility(req, res, next) {
-
+    const ability = req.body;
+    if(!ability.user_id || !ability.ability_name || !ability.ability_description) {
+        res.status(500).json({message: "Please enter a user, ability name, and ability description!"})
+    }else {
+        req.ability = ability;
+        next();
+    }
 }
 
 module.exports = {
