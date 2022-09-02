@@ -15,7 +15,7 @@ delete ability
 
 const express = require('express')
 const Dnd = require('./dnd-model')
-const {checkIdExists,  checkAbilityIdExists, validateAbility, validateDnd,} = require('./dnd-middleware')
+const {checkIdExists,  checkAbilityIdExists, validateAbility, validateDnd, checkNameAvailable,} = require('./dnd-middleware')
 
 const router = express.Router()
 
@@ -36,7 +36,7 @@ router.get('/:id',checkIdExists, (req, res) => {
     res.status(200).json(req.entry)
 })
 
-router.post('/', validateDnd,  (req, res) => {
+router.post('/', validateDnd, checkNameAvailable,  (req, res) => {
     Dnd.insert(req.entry)
         .then(entry => {
             res.status(201).json(entry)

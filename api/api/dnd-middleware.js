@@ -32,8 +32,17 @@ function validateDnd(req, res, next) {
     
 }
 
-function checkNameAvailable(req, res, next) {
-    //check string.to.lower version of name
+async function checkNameAvailable(req, res, next) {
+    try {
+        const entry = await Dnd.findByName(req.body.name);
+        if(entry[0].name) {
+            res.status(500).json({message: "That name is already taken"})
+        }else {
+            next();
+        }
+    } catch(err) {
+        res.status(500).json({message: 'Error checking if name exists'})
+    }
 }
 
 async function checkAbilityIdExists(req, res, next) {
