@@ -35,7 +35,8 @@ function validateDnd(req, res, next) {
 async function checkNameAvailable(req, res, next) {
     try {
         const entry = await Dnd.findByName(req.body.name);
-        if(entry[0].name) {
+        console.log(entry)
+        if(entry[0]) {
             res.status(500).json({message: "That name is already taken"})
         }else {
             next();

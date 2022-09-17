@@ -7,7 +7,7 @@ const server = express()
 server.use(express.json())
 server.use(helmet())
 server.use(cors())
-server.use("/dnd",router)
+server.use("/",router)
 
 
-module.exports = server
+module.exports = server;
