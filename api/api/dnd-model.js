@@ -12,61 +12,61 @@ module.exports ={
 */ 
 
 function findDnd() {
-    return db('dnd');
+    return db("dnd");
 }
 
 function findById(id) {
-    return db('dnd')
+    return db("dnd")
         .where({dnd_id: Number(id)}).first();
 } 
 
 
 function insert(dnd) {
-    return db('dnd')
+    return db("dnd")
         .insert(dnd);
 }
 
 function update(id, dnd) {
-    return db('dnd')
+    return db("dnd")
         .where('dnd_id', Number(id))
         .update(dnd);
 }
 
 function remove(dnd_id) {
-    return db('dnd')
+    return db("dnd")
         .where({dnd_id}).del();
 }
 
 function findByName(name) {
-    return db('dnd')
+    return db("dnd")
         .where('name', name)
 }
 
 function findAbilitiesByDndId(dnd_id) {
-    return db('abilities')
+    return db("abilities")
         .join('dnd', 'dnd.dnd_id', 'abilities.user_id')
         .select('abilities.*')
         .where('user_id', dnd_id);
 }
 
 function findAbilitiesById(id) {
-    return db('abilities')
+    return db("abilities")
         .where({ability_id: Number(id)}).first();
 }
 
 function insertAbility(ability) {
-    return db('abilities')
+    return db("abilities")
         .insert(ability);
 }
 
 function updateAbility(user_id, ability) {
-    return db('abilities')
+    return db("abilities")
         .where('ability_id', Number(user_id))
         .update(ability);
 }
 
 function removeAbility(id) {
-    return db('abilities')
+    return db("abilities")
         .where('ability_id', Number(id))
         .del();
 }
