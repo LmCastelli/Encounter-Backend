@@ -20,7 +20,7 @@ const {checkIdExists,  checkAbilityIdExists, validateAbility, validateDnd, check
 const router = express.Router()
 
 router.get('/', (req, res) => {
-    Dnd.findDnd(req.query)
+    Dnd.findDnd()
         .then(entries => {
             res.status(200).json(entries)
         })
