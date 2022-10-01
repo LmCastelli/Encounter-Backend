@@ -57,6 +57,7 @@ router.put('/:id', validateDnd, checkIdExists, (req, res) => {
                     message:'This id does not exist'
                 })
             } else {
+                console.log("updating?")
                 return Dnd.update(req.params.id, req.entry)
             }
         })

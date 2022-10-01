@@ -1,6 +1,6 @@
 exports.up = async (knex) => {
   await knex.schema
-    .createTable('dnd', (dnd) => {
+    .createTable("dnd", (dnd) => {
       dnd.increments('dnd_id')
       dnd.string('name', 50).notNullable().unique()
       dnd.string('size', 10).defaultTo('medium')
@@ -36,7 +36,7 @@ exports.up = async (knex) => {
       dnd.integer('true_sight', 200).unsigned().defaultTo(0)
       dnd.integer('challenge_rating', 2000).notNullable().unsigned()
     })
-    .createTable('abilities', (ability) => {
+    .createTable("abilities", (ability) => {
       ability.increments('ability_id')
       ability.integer('user_id').unsigned().notNullable();
       ability.string('ability_name').notNullable();
