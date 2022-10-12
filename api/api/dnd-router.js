@@ -49,32 +49,20 @@ router.post('/', validateDnd, checkNameAvailable,  (req, res) => {
         })
 })
 
-router.put('/:id', validateDnd, checkIdExists, (req, res) => {
-    Dnd.findById(req.params.id)
-        .then(entry => {
-            if(!entry) {
-                res.status(404).json({
-                    message:'This id does not exist'
-                })
-            } else {
-                console.log("updating?")
-                return Dnd.update(req.params.id, req.entry)
-            }
-        })
-        .then(entry => {
-            if(entry) {
-                return Dnd.findById(req.params.id)
-            }
-        })
-        .then(updatedEntry => {
-            res.json(updatedEntry)
-        })
-        .catch(err => {
-            res.status(500).json({
-                message: 'The updated info could not be retrieved',
-                error: err.message
-            })
-        })
+router.put('/:id', validateDnd, checkIdExists, async (req, res) => {
+    const {id} = req.params;
+    const newEntry = req.body;
+
+    try {
+        const updatedEntry = await Dnd.update(id, newEntry);
+        if (updatedEntry) {
+            res.status(200).json({message: "updated"})
+        } else{
+            res.status(404).json({message: "could not find entry"})
+        }
+    } catch (err) {
+        res.status(500).json({message: "error updating post"})
+    }
 })
 
 router.delete('/:id', checkIdExists,  async (req, res) => {

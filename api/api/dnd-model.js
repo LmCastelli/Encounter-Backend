@@ -28,7 +28,7 @@ function insert(dnd) {
 
 function update(id, dnd) {
     return db("dnd")
-        .where('dnd_id', Number(id))
+        .where({dnd_id: Number(id)})
         .update(dnd);
 }
 
