@@ -37,16 +37,34 @@ exports.up = async (knex) => {
       dnd.integer('challenge_rating', 2000).notNullable().unsigned()
     })
     .createTable("abilities", (ability) => {
-      ability.increments('ability_id')
+      ability.increments('ability_id');
       ability.integer('user_id').unsigned().notNullable();
       ability.string('ability_name').notNullable();
       ability.string('ability_description').notNullable();
       ability.foreign('user_id').references('dnd_id').inTable('dnd')
     })
+    .createTable("encounters", (encounter) => {
+      encounter.increments('encounter_id')
+      encounter.string('name').unsigned().notNullable();
+      encounter.string('details').defaultTo('');
+    })
+    .createTable("roster", (roster) => {
+      roster.increments('roster_id');
+      roster.integer('encounter_id').unsigned().notNullable();
+      roster.integer('dnd_id').unsigned().notNullable();
+      roster.integer('ac').notNullable();
+      roster.integer('hp').unsigned().notNullable();
+      roster.string('name').notNullable();
+      roster.string('status').defaultTo('');
+      roster.foreign('encounter_id').references('encounter_id').inTable('encounters');
+      roster.foreign('dnd_id').references('dnd_id').inTable('dnd');
+    })
 }
 
 exports.down = async (knex) => {
   await knex.schema
+  .dropTableIfExists('roster')
+  .dropTableIfExists('encounters')
   .dropTableIfExists('abilities')
   .dropTableIfExists('dnd')
 }
