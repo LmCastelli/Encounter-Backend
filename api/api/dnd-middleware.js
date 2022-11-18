@@ -24,7 +24,7 @@ async function checkIdExists(req, res, next) {
 function validateDnd(req, res, next) {
     const entry = req.body;
     if(!entry.name || !entry.hit_points || !entry.speed || !entry.STR || !entry.DEX || !entry.CON || !entry.INT || !entry.WIS || !entry.WIS || !entry.CHA || !entry.challenge_rating) {
-        res.status(500).json({message: "Please entre all the required fields for an entry!"})
+        res.status(500).json({message: "Please enter all the required fields for an entry!"})
     }else {
         req.entry = entry;
         next();
@@ -70,10 +70,39 @@ function validateAbility(req, res, next) {
     }
 }
 
+//encounters
+
+async function checkEncounterIdExists(req, res, next) {
+    try {
+        const encounter = await Dnd.findByEncounterId(req.params.id)
+        if (encounter) {
+            req.encounter = encounter;
+            next()
+        } else {
+            res.status(404).json({message: "Could not locate encounter with that ID"})
+        }
+    } catch(err) {
+        res.status(500).json({message: "Error finding encounter"})
+    }
+}
+
+function validateEncounter(req, res, next) {
+    const encounter = req.body;
+    if(!encounter.name) {
+        res.status(500).json({message:"Please enter an encounter name"})
+    } else {
+        req.encounter = encounter;
+        next();
+    }
+}
+
 module.exports = {
     checkIdExists,
     validateDnd,
     checkNameAvailable,
     checkAbilityIdExists,
     validateAbility,
+    checkEncounterIdExists,
+    validateEncounter,
+    
 }

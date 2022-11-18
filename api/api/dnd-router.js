@@ -15,7 +15,7 @@ delete ability
 
 const express = require('express')
 const Dnd = require('./dnd-model')
-const {checkIdExists,  checkAbilityIdExists, validateAbility, validateDnd, checkNameAvailable,} = require('./dnd-middleware')
+const {checkIdExists,  checkAbilityIdExists, validateAbility, validateDnd, checkNameAvailable, checkEncounterIdExists, validateEncounter,} = require('./dnd-middleware')
 
 const router = express.Router()
 
@@ -150,6 +150,51 @@ router.delete('/abilities/:id', checkAbilityIdExists, (req, res) => {
             error: err.message
         })
    })
+})
+
+//encounters
+
+router.get('/encounters/all', (req, res) => {
+    Dnd.findEncounters()
+        .then(encounters => {
+            res.status(200).json(encounters)
+        })
+        .catch(err => {
+            console.log(err)
+            res.status(500).json({
+                message: "Error while grabbing the encounters"
+            })
+        })
+})
+
+router.get('/encounters/:id', checkEncounterIdExists, (req, res) => {
+    res.status(200).json(req.encounter)
+})
+
+router.post('/encounters', validateEncounter, (req, res) => {
+    Dnd.insertEncounter(req.encounter)
+        .then(encounter => {
+            res.status(201).json(encounter)
+        })
+        .catch(err => {
+            res.status(500).json({
+                message: "Error adding new encounter",
+                err: err.message
+            })
+        })
+})
+
+router.delete('/encounters/:id', checkEncounterIdExists, (req, res) => {
+    Dnd.removeEncounter(req.params.id)
+        .then(deletedEncounter => {
+            res.status(200).json(deletedEncounter)
+        })
+        .catch(err => {
+            res.status(500).json({
+                message: 'The encounter could not be deleted',
+                error: err.message
+            })
+        })
 })
 
 module.exports = router;

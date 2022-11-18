@@ -42,6 +42,8 @@ function findByName(name) {
         .where('name', name)
 }
 
+//abilities
+
 function findAbilitiesByDndId(dnd_id) {
     return db("abilities")
         .join('dnd', 'dnd.dnd_id', 'abilities.user_id')
@@ -71,7 +73,58 @@ function removeAbility(id) {
         .del();
 }
 
+//encounters
 
+function findEncounters() {
+    return db('encounters');
+}
+
+function findByEncounterId(id) {
+    return db('encounters')
+        .where({encounter_id: Number(id)}).first();
+}
+
+function insertEncounter(encounter) {
+    return db('encounters')
+        .insert(encounter);
+}
+
+function removeEncounter(id) {
+    return db('encounters')
+        .where('encounter_id', Number(id)).del();
+}
+//roster
+
+function findRosters() {
+    return db('roster')
+}
+
+function findRosterById(id) {
+    return db('roster')
+        .where({roster_id: Number(id)}).first();
+}
+
+function findRosterByEncounterId(id) {
+    return db('roster')
+    //ASK UNCLE
+        .where({encounter_id: Number(id)});
+}
+
+function insertRoster(roster) {
+    return db('roster')
+        .insert(roster);
+}
+
+function updateRoster(id, roster) {
+    return db('roster')
+        .where({roster_id: Number(id)})
+        .update(roster);
+}
+
+function removeRoster(roster_id) {
+    return db('roster')
+        .where({roster_id}).del();
+}
 
 module.exports = {
     findDnd,
@@ -85,5 +138,14 @@ module.exports = {
     insertAbility,
     updateAbility,
     removeAbility,
-
+    findEncounters,
+    findByEncounterId,
+    insertEncounter,
+    removeEncounter,
+    findRosters,
+    findRosterById,
+    findRosterByEncounterId,
+    insertRoster,
+    updateRoster,
+    removeRoster,
 }
