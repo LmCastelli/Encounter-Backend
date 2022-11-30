@@ -96,6 +96,44 @@ function validateEncounter(req, res, next) {
     }
 }
 
+async function checkRosterIdExists(req, res, next) {
+    try {
+        const roster = await Dnd.findRosterById(req.params.id)
+        if(roster) {
+            req.roster = roster;
+            next()
+        } else{
+            res.status(404).json({message: 'Could not find roster with that id'})
+        }
+    } catch(err) {
+        res.status(500).json({message: 'Error finding roster'})
+    }
+}
+
+async function checkEncounterIdForRoster(req, res, next) {
+    try {
+        const fullRoster = await Dnd.findRosterByEncounterId(req.params.id)
+        if(fullRoster) {
+            req.fullRoster = fullRoster;
+            next()
+        } else {
+            res.status(404).json({message: 'Could not find that encounter id'})
+        }
+    } catch(err) {
+        res.status(500).json({message: 'Error finding the entries for that encounter'})
+    }
+}
+
+function validateRoster(req, res, next) {
+    const roster = req.body;
+    if(!roster.encounter_id || !roster.dnd_id || !roster.ac || !roster.hp || !roster.name) {
+        res.status(500).json({message: "Please enter all the required fields for encounter entries"})
+    } else {
+        req.roster = roster; 
+        next();
+    }
+}
+
 module.exports = {
     checkIdExists,
     validateDnd,
@@ -104,5 +142,7 @@ module.exports = {
     validateAbility,
     checkEncounterIdExists,
     validateEncounter,
-    
+    checkRosterIdExists, 
+    validateRoster,
+    checkEncounterIdForRoster,
 }

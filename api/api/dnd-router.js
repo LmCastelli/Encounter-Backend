@@ -15,7 +15,7 @@ delete ability
 
 const express = require('express')
 const Dnd = require('./dnd-model')
-const {checkIdExists,  checkAbilityIdExists, validateAbility, validateDnd, checkNameAvailable, checkEncounterIdExists, validateEncounter,} = require('./dnd-middleware')
+const {checkIdExists,  checkAbilityIdExists, validateAbility, validateDnd, checkNameAvailable, checkEncounterIdExists, validateEncounter, checkRosterIdExists, checkEncounterIdForRoster, validateRoster,} = require('./dnd-middleware')
 
 const router = express.Router()
 
@@ -192,6 +192,71 @@ router.delete('/encounters/:id', checkEncounterIdExists, (req, res) => {
         .catch(err => {
             res.status(500).json({
                 message: 'The encounter could not be deleted',
+                error: err.message
+            })
+        })
+})
+
+//roster
+
+router.get('/roster/all', (req, res) => {
+    Dnd.findRosters()
+        .then(rosters => {
+            res.status(200).json(rosters)
+        })
+        .catch(err => {
+            console.log(err)
+            res.status(500).json({
+                message: 'Error grabbing the rosters'
+            })
+        })
+})
+
+router.get('/roster/:id', checkRosterIdExists, (req, res) => {
+    res.status(200).json(req.roster)
+})
+
+router.get('/roster/encounter/:id', checkEncounterIdForRoster, (req, res) => {
+    res.status(200).json(req.fullRoster)
+})
+
+router.post('/roster', validateRoster, (req, res) => {
+    Dnd.insertRoster(req.roster)
+        .then(roster => {
+            res.status(201).json(roster)
+        })
+        .catch(err => {
+            res.status(500).json({
+                message: 'Error while adding roster',
+                err: err.message
+            })
+        })
+})
+
+router.put('/roster/:id', checkRosterIdExists, validateRoster, async (req, res) => {
+    const {id} = req.params;
+    const changes = req.body;
+
+    try {
+        const updatedRoster = await Dnd.updateRoster(id, changes);
+        if (updatedRoster) {
+            res.status(200).json({message: 'Roster updated'})
+        } else {
+            res.status(404).json({message: 'Could not find that roster id'})
+        }
+    } catch (err) {
+        res.status(500).json({message: 'Error updating roster'})
+    }
+})
+
+router.delete('/roster/:id', checkRosterIdExists, (req, res) => {
+    Dnd.removeRoster(req.params.id)
+        .then(deletedRoster => {
+            res.status(200).json(deletedRoster)
+        })
+        .catch(err => {
+            res.status(500).json({
+                message: 'The roster could not be deleted',
                 error: err.message
             })
         })
